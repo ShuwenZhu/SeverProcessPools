@@ -3,8 +3,8 @@
 
 // XML files from Professor Fawcett's Libraries. We only use the two modules linked,
 //     although there are several more.
-#include "../XmlDocument/XmlParser/XmlParser.h"
-#include "../XmlDocument/XmlDocument/XmlDocument.h"
+#include "XmlDocument/XmlParser/XmlParser.h"
+#include "XmlDocument/XmlDocument/XmlDocument.h"
 
 
 //Our own project files, the Logger and TestHarness
@@ -26,7 +26,7 @@ int main(void) {
 	//log.Critical("This is an critical level statement.");
 
 	// This is where our test xml file is.
-	std::string src = "../LocalTestHarness/xmlFiles/test1.xml";
+	std::string src = "xmlFiles/test1.xml";
 
 	log.Debug("Using the professors library to parse XML:");
 
