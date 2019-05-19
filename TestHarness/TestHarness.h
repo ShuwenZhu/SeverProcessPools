@@ -12,6 +12,7 @@ private:
 public:
 	TestHarness(Logger myLogger);
 	bool TestLibrary(::std::string libname);
+	bool handleTestSequence(::std::string xmlSequence);
 	//destructor
 	~TestHarness();
 };

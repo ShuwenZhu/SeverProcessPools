@@ -3,15 +3,14 @@
 
 // XML files from Professor Fawcett's Libraries. We only use the two modules linked,
 //     although there are several more.
-#include "XmlDocument/XmlParser/XmlParser.h"
-#include "XmlDocument/XmlDocument/XmlDocument.h"
+
 
 
 //Our own project files, the Logger and TestHarness
 #include "TestHarness.h"
 #include "Logger.h"
 
-using sPtr = std::shared_ptr < XmlProcessing::AbstractXmlElement >;
+
 
 int main(void) {
 
@@ -19,52 +18,23 @@ int main(void) {
 	Logger log(info);
 	TestHarness harness(log);
 
-	//log.Debug("This is an Debug level statement.");
-	//log.Info("This is an info level statement.");
-	//log.Warning("This is an warning level statement.");
-	//log.Error("This is an error level statement.");
-	//log.Critical("This is an critical level statement.");
+	std::string src = "<?xml version=\"1.0\" encoding=\"utf - 8\"?>\
+		<!--XML test case -->\
+		<TestRequest>\
+		<test>DivideTestDll.dll< / test>\
+		<test>LambdaTestDll.dll< / test>\
+		<test>WillNotLoadTest.dll< / test>\
+		< / TestRequest>";
 
-	// This is where our test xml file is.
-	std::string src = "xmlFiles/test1.xml";
-
-	log.Debug("Using the professors library to parse XML:");
-
-	// Instansiate xml parser, parse our xml to a file
-	XmlProcessing::XmlParser parser(src);
-	XmlProcessing::XmlDocument* pDoc = parser.buildDocument();
-
-	// Find all children of "TestRequest", which should be "test" elements with DLL names inside.
-	std::string testTag = "TestRequest";
-	std::vector<sPtr> found = pDoc->element(testTag).descendents().select();
+	log.Debug("Handling passed in Sequence");
+	bool result = harness.handleTestSequence(src);
 	std::ostringstream os;
-	std::string libName;
-	if (found.size() > 0) {
-		for (auto pElem : found) {
+	os.str("");
+	os << "Result of Sequence:" << result;
+	log.Info(os.str());
 
-			libName = pElem->value();
-			// "test" are the outside containers of our dll names. Skip em.
-			if (libName == "test") { continue; }
 
-			os.str("");
-			os << "Dynamically loading and evalutating the dll named: --" << libName <<  "--.";
-			log.Info("============================================================================");
-			log.Info(os.str());
-			os.str("");
-			os << "Library --" << libName << "-- test status: ";
-			if (harness.TestLibrary(libName)) {
-				os << "PASS";
-			} else {
-				os << "FAIL";
-			}
-			log.Info(os.str());
-			log.Info("============================================================================");
-		}
-	} else {
-		os.str("");
-		os << "No element called " << testTag << " found.";
-		log.Critical(os.str());
-	}
+	log.Info("
 	log.Info("All done!");
 	system("pause");
 	return 0;
