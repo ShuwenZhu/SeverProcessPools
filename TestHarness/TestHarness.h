@@ -3,14 +3,14 @@
 #define TESTHARNESS_H
 
 #include <initializer_list>
-#include "Logger.h"
+#include "LoggerTH.h"
 
 class TestHarness {
 private:
-	Logger log; //Logger package
+	LoggerTH log; //Logger package
 
 public:
-	TestHarness(Logger myLogger);
+	TestHarness(LoggerTH myLogger, int workerCount);
 	bool TestLibrary(::std::string libname);
 	bool handleTestSequence(::std::string xmlSequence);
 	//destructor

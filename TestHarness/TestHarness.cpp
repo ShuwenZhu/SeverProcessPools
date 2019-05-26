@@ -5,7 +5,7 @@
 #include <windows.h>
 
 #include "TestHarness.h"
-#include "Logger.h"
+#include "LoggerTH.h"
 
 #include "XmlDocument\XmlParser\XmlParser.h"
 #include "XmlDocument/XmlDocument/XmlDocument.h"
@@ -14,8 +14,12 @@
 using sPtr = std::shared_ptr < XmlProcessing::AbstractXmlElement >;
 
 // Default constructor
-TestHarness::TestHarness(Logger myLogger) {
+TestHarness::TestHarness(LoggerTH myLogger, int workerCount) {
 	log = myLogger;
+	for (int i = 0; i < workerCount; i++) {
+		log.Debug("Spining up a worker subprocess!");
+		//spin up worker subprocess
+	}
 }
 
 // iTest function prototype

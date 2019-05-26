@@ -15,96 +15,84 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestHarness.cpp">
+    <ClCompile Include="..\TestHarness\XmlDocument\XmlParser\XmlParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="XmlDocument\XmlParser\XmlParser.cpp">
+    <ClCompile Include="..\TestHarness\Comm\MsgPassingComm\Comm.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="XmlDocument\XmlElementParts\Tokenizer.cpp">
+    <ClCompile Include="..\TestHarness\Comm\Cpp11-BlockingQueue\Cpp11-BlockingQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="XmlDocument\XmlElementParts\xmlElementParts.cpp">
+    <ClCompile Include="..\TestHarness\Comm\Message\Message.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="XmlDocument\XmlElement\XmlElement.cpp">
+    <ClCompile Include="..\TestHarness\Comm\Sockets\Sockets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="XmlDocument\XmlDocument\XmlDocument.cpp">
+    <ClCompile Include="..\TestHarness\XmlDocument\XmlElementParts\Tokenizer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Comm\Cpp11-BlockingQueue\Cpp11-BlockingQueue.cpp">
+    <ClCompile Include="..\TestHarness\Comm\Utilities\Utilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Comm\Message\Message.cpp">
+    <ClCompile Include="..\TestHarness\Comm\WindowsHelpers\WindowsHelpers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Comm\MsgPassingComm\Comm.cpp">
+    <ClCompile Include="..\TestHarness\XmlDocument\XmlDocument\XmlDocument.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Comm\Sockets\Sockets.cpp">
+    <ClCompile Include="..\TestHarness\XmlDocument\XmlElement\XmlElement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Comm\WindowsHelpers\WindowsHelpers.cpp">
+    <ClCompile Include="..\TestHarness\XmlDocument\XmlElementParts\xmlElementParts.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Comm\Utilities\Utilities.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LoggerTH.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Comm\Logger\Logger.cpp">
+    <ClCompile Include="..\TestHarness\Comm\Logger\Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TestHarness.h">
+    <ClInclude Include="..\TestHarness\XmlDocument\XmlParser\XmlParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="XmlDocument\XmlParser\XmlParser.h">
+    <ClInclude Include="..\TestHarness\XmlDocument\XmlElementParts\xmlElementParts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="XmlDocument\XmlElementParts\itokcollection.h">
+    <ClInclude Include="..\TestHarness\XmlDocument\XmlElement\XmlElement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="XmlDocument\XmlElementParts\Tokenizer.h">
+    <ClInclude Include="..\TestHarness\XmlDocument\XmlDocument\XmlDocument.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="XmlDocument\XmlElementParts\xmlElementParts.h">
+    <ClInclude Include="..\TestHarness\Comm\WindowsHelpers\WindowsHelpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="XmlDocument\XmlElement\XmlElement.h">
+    <ClInclude Include="..\TestHarness\Comm\Utilities\Utilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="XmlDocument\XmlDocument\XmlDocument.h">
+    <ClInclude Include="..\TestHarness\XmlDocument\XmlElementParts\Tokenizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Comm\WindowsHelpers\WindowsHelpers.h">
+    <ClInclude Include="..\TestHarness\Comm\Sockets\Sockets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Comm\Sockets\Sockets.h">
+    <ClInclude Include="..\TestHarness\Comm\Message\Message.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Comm\MsgPassingComm\Comm.h">
+    <ClInclude Include="..\TestHarness\XmlDocument\XmlElementParts\itokcollection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Comm\Message\Message.h">
+    <ClInclude Include="..\TestHarness\Comm\Cpp11-BlockingQueue\Cpp11-BlockingQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Comm\Cpp11-BlockingQueue\Cpp11-BlockingQueue.h">
+    <ClInclude Include="..\TestHarness\Comm\MsgPassingComm\Comm.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Comm\Utilities\Utilities.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LoggerTH.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Comm\Logger\Logger.h">
+    <ClInclude Include="..\TestHarness\Comm\Logger\Logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
