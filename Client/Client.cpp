@@ -3,6 +3,7 @@
 
 #include <iostream>
 
+
 // Read in XML, parse the XML
 #include "..\TestHarness\XmlDocument\XmlParser\XmlParser.h"
 #include "..\TestHarness\XmlDocument\XmlDocument\XmlDocument.h"
@@ -10,8 +11,6 @@
 
 // Comm libraries!
 #include "../TestHarness/Comm/MsgPassingComm/Comm.h"
-//#include "../TestHarness/Comm/Logger/Logger.h"
-//#include "../TestHarness/Comm/Utilities/Utilities.h"
 #include "../TestHarness/Comm/Cpp11-BlockingQueue/Cpp11-BlockingQueue.h"
 #include "../TestHarness/Comm/Message/Message.h"
 
@@ -21,24 +20,37 @@ using namespace Sockets;
 using SUtils = Utilities::StringHelper;
 
 
-int main() {
+int main(int argc, char* argv[]) {
 	std::cout << "Client.exe starting\n";
+	for (int i = 0; i < argc; i++) {
+		std::cout << "ClientArgs: --" << argv[i] << "--\n";
+	}
+	if (argc != 2) {
+		std::cout << "Wrong number of arguments specified to the worker.\n";
+		std::cout << "Usage: Client.exe <serverPort> <xmlfilPath>\n";
+		std::cout << "My args: " << argv << "\n";
+		return 1;
+	}
+
+
+	int serverPort = atoi(argv[0]);
+	std::string xmlFileName = argv[1];
+
 
 	// This just proves we CAN read in an xml file! Need to shift some of the processing to here.
-	std::string xmlFileName = "../TestHarness/xmlfiles/test1.xml";
 	XmlProcessing::XmlParser parser(xmlFileName, XmlProcessing::XmlParser::sourceType::file);
 	XmlProcessing::XmlDocument* pDoc = parser.buildDocument();
 
 	// Create a comm, send out to the server (known as 9091 right now)
 	SocketSystem ss;
-	EndPoint serverEP("localhost", 9091);
-	EndPoint clientEP("localhost", 9092);
+	EndPoint serverEP("localhost", serverPort);
+	EndPoint clientEP("localhost", 9999);
 	Comm comm(clientEP, "clientComm");
 	comm.start();
 	std::cout << "Client: Comm started, creating message\n";
 	Message msg(serverEP, clientEP);
-	msg.name("msg1");
-	msg.command("READY");
+	msg.name("REQUEST");
+	msg.command("Dllname.dll");
 	comm.postMessage(msg);
 	comm.stop();
 	return 0;

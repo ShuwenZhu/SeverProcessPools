@@ -1,23 +1,12 @@
 #include <iostream>
 #include <sstream>
-//#include <Windows.h>
-
-
-
-// XML files from Professor Fawcett's Libraries. We only use the two modules linked,
-//     although there are several more.
-
-
 
 //Our own project files, the Logger and TestHarness
 #include "TestHarness.h"
 #include "LoggerTH.h"
 
-
 // Comm libraries!
 #include "Comm/MsgPassingComm/Comm.h"
-//#include "Comm/Logger/Logger.h"
-//#include "Comm/Utilities/Utilities.h"
 #include "Comm/Cpp11-BlockingQueue/Cpp11-BlockingQueue.h"
 #include "Comm/Message/Message.h"
 
@@ -51,9 +40,13 @@ int main(void) {
 			3.4) TestHarness gets pass/fail back
 	*/
 
+	std::string xmlFilePath = "../TestHarness/xmlfiles/test1.xml";
+	int serverPort = 9091;
+
+
 	// Spin up a reciever in the the main, client will connect and send a message
 	SocketSystem ss;
-	EndPoint serverEP("localhost", 9091);
+	EndPoint serverEP("localhost", serverPort);
 	Comm comm(serverEP, "serverComm");
 	comm.start();
 
@@ -64,13 +57,23 @@ int main(void) {
 	info.cb = sizeof(info);
 	ZeroMemory(&processInfo, sizeof(processInfo));
 
-	if (CreateProcess(TEXT("..\\Debug\\Client.exe"), NULL,
+	// Make the cmdArgs needed
+	std::ostringstream cmdargs;
+	cmdargs.str(" ");
+	cmdargs << serverPort << " " << xmlFilePath;
+	std::string cmdArgs = cmdargs.str();
+
+	// Create the client process with arguments
+	if (CreateProcess(
+		"..\\Debug\\Client.exe", 
+		LPSTR(cmdArgs.c_str()),
 		NULL, NULL, FALSE, 0, NULL,
 		NULL, &info, &processInfo)) {
 
-		//WaitForSingleObject(processInfo.hProcess, INFINITE);
-		//CloseHandle(processInfo.hProcess);
-		//CloseHandle(processInfo.hThread);
+		std::cout << "Client Process Launched!\n";
+	} else {
+		std::cout << "Client process failed to launch!\n";
+		return 1;
 	}
 
 	Message msg;  // blocks until message arrives
@@ -78,7 +81,22 @@ int main(void) {
 		std::cout << "Waiting for message:\n";
 		msg = comm.getMessage();
 		std::cout << "========================================================\n";
-		std::cout << comm.name() + ": received message: " << msg.name();
+		std::cout << comm.name() + ": received message: --" << msg.name() << "--\n";
+		if (msg.name() == "READY") {
+			std::cout << "Processing a READY message..\n";
+			// Push to ready queue
+		}
+		else if (msg.name() == "REQUEST") {
+			std::cout << "Processing a REQUEST message..\n";
+			// pop a worker off the ready queue, pass it a request
+		}
+		else if (msg.name() == "RESULT") {
+			std::cout << "Processing a RESULT message..\n";
+		}
+		else {
+			std::cout << "Unknown Message. Discarding...\n";
+			// Toss it
+		}
 		msg.show();
 		std::cout << "========================================================\n";
 	}
