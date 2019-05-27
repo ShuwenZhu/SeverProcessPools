@@ -19,6 +19,7 @@ int main(void) {
 
 	// Some constants
 	std::string xmlFilePath = "../TestHarness/xmlfiles/test1.xml";
+	std::string clientPath = "..\\Debug\\Client.exe";
 	int serverPort = 9091;
 	const int workerCount = 5;
 
@@ -57,7 +58,7 @@ int main(void) {
 	std::string cmdArgs = cmdargs.str();
 	// Create the client process with arguments
 	if (CreateProcess(
-		"..\\Debug\\Client.exe", 
+		LPCSTR(clientPath.c_str()),
 		LPSTR(cmdArgs.c_str()),
 		NULL, NULL, FALSE, 0, NULL,
 		NULL, &info, &processInfo)) {

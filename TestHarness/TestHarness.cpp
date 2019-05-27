@@ -45,6 +45,7 @@ bool TestHarness::startWorker(int serverPort, int clientPort) {
 	return false;
 }
 
+// ProcessQueues handles the queues, dispatching REQUESTS to READY workers.
 void TestHarness::ProcessQueues(int serverPort) {
 	Message msg;
 	Message request;
@@ -52,7 +53,7 @@ void TestHarness::ProcessQueues(int serverPort) {
 	SocketSystem ss;
 
 	EndPoint serverEP("localhost", serverPort);
-	EndPoint sneakyServer("localhost", 8090);
+	EndPoint sneakyServer("localhost", 8090);// We dont listen, just need a comm
 	Comm myComm(sneakyServer, "serverComm2");
 	myComm.start();
 
@@ -70,7 +71,7 @@ void TestHarness::ProcessQueues(int serverPort) {
 	}
 	return;
 }
-
+// serverThreadfunction is the server thread that handles the 
 void TestHarness::serverThreadFunction(int serverPort) {
 	std::ostringstream output;
 	SocketSystem ss;
@@ -91,6 +92,7 @@ void TestHarness::serverThreadFunction(int serverPort) {
 		if (msg.name() == "READY") {
 			log.Debug("Processing a READY message..");
 			// Push worker endpoint to ready queue!
+			log.Info("Adding a worker to the READY queue.");
 			readyQueue.enQ(msg.from());
 		}
 		else if (msg.name() == "REQUEST") {
@@ -100,9 +102,12 @@ void TestHarness::serverThreadFunction(int serverPort) {
 		}
 		else if (msg.name() == "RESULT") {
 			log.Debug("Processing a RESULT message..");
-			output.str(""); output << "Received a result from child --";
+			log.Info("========================================================");
+			output.str(""); output << "Received a result from child --" << msg.attribName("libname");
 			output << "--: Test was a --" << msg.command() << "--";
 			log.Info(output.str());
+			msg.show();
+			log.Info("========================================================");
 		}
 		else {
 			log.Warning("Unknown message recieved, tossing.");

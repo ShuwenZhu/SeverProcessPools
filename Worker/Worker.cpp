@@ -2,10 +2,15 @@
 //
 #include <iostream>
 #include <sstream>
+#include <ctime>    
 
+// Comm packages
 #include "../TestHarness/Comm/MsgPassingComm/Comm.h"
 #include "../TestHarness/Comm/Cpp11-BlockingQueue/Cpp11-BlockingQueue.h"
 #include "../TestHarness/Comm/Message/Message.h"
+
+#pragma warning(disable : 4996)
+
 
 using namespace MsgPassingCommunication;
 using namespace Sockets;
@@ -49,6 +54,20 @@ inline const char* const BoolToString(bool b) {
 	return b ? "true" : "false";
 }
 
+std::string getTimestamp() {
+	std::ostringstream timeStream;
+	std::time_t t = std::time(0);   // get time now
+	std::tm* now = std::localtime(&t);
+
+	timeStream << "[" << 1900 + now->tm_year << "-"
+		<< 1 + now->tm_mon << "-"
+		<< now->tm_mday << " "
+		<< 1 + now->tm_hour << ":"
+		<< 1 + now->tm_min << ":"
+		<< 1 + now->tm_sec << "]";
+	return timeStream.str();
+}
+
 int main(int argc, char* argv[]) {
 	SocketSystem ss;
 	if (argc != 2) {
@@ -75,21 +94,27 @@ int main(int argc, char* argv[]) {
 
 	Message request, passFailReply;  // blocks until message arrives
 	bool result = false;
+	std::string receiveTime;
 	while (true) {
+		receiveTime = getTimestamp();
 		//std::cout << comm.name() << ": Waiting for message:\n";
 		request = comm.getMessage();
 		//std::cout << "========================================================\n";
 		//std::cout << comm.name() + ": received message: " << request.name();
 		if (request.name() == "REQUEST") {
 			//  Test the dll, return the result
+			
 			result = TestDLL(request.command());
 			passFailReply.command(BoolToString(result));
+			passFailReply.attribute("libname", request.command());
+			passFailReply.attribute("recvTime", receiveTime);
+			passFailReply.attribute("processTime", getTimestamp());
 			passFailReply.to(request.from());
 			passFailReply.from(request.to());
 			passFailReply.name("RESULT");
 			comm.postMessage(passFailReply);
 		}
-		request.show();
+		//request.show();
 		//std::cout << "========================================================\n";
 	}
 	comm.stop();
