@@ -14,55 +14,47 @@ using namespace MsgPassingCommunication;
 using namespace Sockets;
 using SUtils = Utilities::StringHelper;
 
+
 int main(void) {
 
-	/* Okay, here are the set of *probably* changes we need to make from the requirements:"
-	 *    1) New "Client" project executable.
-	 *        a) Our Executive will create a client, (or multiples) which will read in an XML file, and send that file out to our server.
-	 *    2) As the Executive starts, he instansiates our TestHarness.
-	          a) TestHarness spawns several child worker processes, and a thread to parse the comm and place messages on the right queues.
-	          b) TestHarness will be checking the queues, and when a READY message hits the queue, he pulls a message off of the Requests queue,
-			     and sends the message to the associated child process.
-	 *
-	 */
-
-	/*
-	   Flow of main (the executive) should be
-	     1) Instansiate the Test Harness
-			1.1) Test Harness will create worker subprocesses who report "READY"
-		 2) Start up at least two "clients" who will take a fileName and a target server address, and its own port 
-			2.1) Clients will read in xml, then send requests to the TestHarness server
-			2.2) Client exits
-		  3) Server is listening for requests!
-			3.1) Request comes in, worker thread adds to queues
-			3.2) Server removes request from queue, and then passes off to worker process
-			3.3) Worker process runs the test and returns pass/fail
-			3.4) TestHarness gets pass/fail back
-	*/
-
+	// Some constants
 	std::string xmlFilePath = "../TestHarness/xmlfiles/test1.xml";
 	int serverPort = 9091;
+	const int workerCount = 5;
+
+	// Start the logger and harness
+	LoggerTH log(::Level::info);
+	TestHarness harness(log);
 
 
-	// Spin up a reciever in the the main, client will connect and send a message
-	SocketSystem ss;
-	EndPoint serverEP("localhost", serverPort);
-	Comm comm(serverEP, "serverComm");
-	comm.start();
 
+	// =========================================================================
+	// Some black magic needed, found here:
+	// https://stackoverflow.com/questions/14276425/calling-overloaded-member-functions-using-stdthread
+	// Essentially tricks std::thread to behavior properly!
+	using memfunc_type = void (TestHarness::*)(int);
+	memfunc_type memfunc = &TestHarness::serverThreadFunction;
+	// =========================================================================
+	// Start the server in a seperate thread!
+	log.Info("Starting server thread");
+	std::thread serverThread(memfunc, &harness, serverPort);
+	serverThread.detach();
+
+	// Start the workers!
+	harness.StartWorkers(serverPort, workerCount);
+
+	// Start the Client:
+	// ========================================================================
 	STARTUPINFO info = { sizeof(info) };
 	PROCESS_INFORMATION processInfo;
-
 	ZeroMemory(&info, sizeof(info));
 	info.cb = sizeof(info);
 	ZeroMemory(&processInfo, sizeof(processInfo));
-
 	// Make the cmdArgs needed
 	std::ostringstream cmdargs;
 	cmdargs.str(" ");
 	cmdargs << serverPort << " " << xmlFilePath;
 	std::string cmdArgs = cmdargs.str();
-
 	// Create the client process with arguments
 	if (CreateProcess(
 		"..\\Debug\\Client.exe", 
@@ -75,65 +67,12 @@ int main(void) {
 		std::cout << "Client process failed to launch!\n";
 		return 1;
 	}
-
-	Message msg;  // blocks until message arrives
+	int i = 0;
 	while (true) {
-		std::cout << "Waiting for message:\n";
-		msg = comm.getMessage();
-		std::cout << "========================================================\n";
-		std::cout << comm.name() + ": received message: --" << msg.name() << "--\n";
-		if (msg.name() == "READY") {
-			std::cout << "Processing a READY message..\n";
-			// Push to ready queue
-		}
-		else if (msg.name() == "REQUEST") {
-			std::cout << "Processing a REQUEST message..\n";
-			// pop a worker off the ready queue, pass it a request
-		}
-		else if (msg.name() == "RESULT") {
-			std::cout << "Processing a RESULT message..\n";
-		}
-		else {
-			std::cout << "Unknown Message. Discarding...\n";
-			// Toss it
-		}
-		msg.show();
-		std::cout << "========================================================\n";
+		//Just block stuff.
+		i++;
 	}
 
-
-	system("pause");
-	return 0; // Just for now while we figure out socket communication
-
-
-	//===================================================================================================================================
-	//===================================================================================================================================
-	//===================================================================================================================================
-
-	// Amount of worker threads to create!
-	const int workerCount = 5;
-
-	// Start the logger and harness
-	LoggerTH log(::Level::info);
-	TestHarness harness(log, workerCount);
-
-	std::string src = "<?xml version=\"1.0\" encoding=\"utf - 8\"?>\
-		<!--XML test case -->\
-		<TestRequest>\
-		<test>DivideTestDll.dll< / test>\
-		<test>LambdaTestDll.dll< / test>\
-		<test>WillNotLoadTest.dll< / test>\
-		< / TestRequest>";
-
-	log.Debug("Handling passed in Sequence");
-	bool result = harness.handleTestSequence(src);
-	std::ostringstream os;
-	os.str("");
-	os << "Result of Sequence:" << result;
-	log.Info(os.str());
-
-
-	log.Info("oops");
-	log.Info("All done!");
+	serverThread.join();
 	return 0;
 }
