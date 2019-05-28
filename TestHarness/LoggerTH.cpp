@@ -1,4 +1,4 @@
-#include "Logger.h"
+#include "LoggerTH.h"
 #include <iostream>
 #include <iomanip>
 #include <ctime>    
@@ -13,22 +13,22 @@ using std::left;
 
 const int headerLevel = 8;
 
-Logger::Logger(Level l) {
+LoggerTH::LoggerTH(Level l) {
 	level = l;
 }
 
-Logger::Logger() {
+LoggerTH::LoggerTH() {
 	level =info;
 }
 
-void Logger::setLogLevel(Level l) {
+void LoggerTH::setLogLevel(Level l) {
 	level = l;
 }
 
 // The next few functions are our multi level printers. They only print when
 // the level (or higher) matches, and formats the output for us.
 //===================================================================
-void Logger::printer(Level myLevel, std::string str) {
+void LoggerTH::printer(Level myLevel, std::string str) {
 	std::string levelHeader = "[Unkonwn]";
 	std::string timestamp;
 	std::ostringstream timeStream;
@@ -55,33 +55,33 @@ void Logger::printer(Level myLevel, std::string str) {
 }
 
 // Critical always prints.
-void Logger::Critical(std::string str) {
+void LoggerTH::Critical(std::string str) {
 	printer(critical, str);
 }
 
 // Error only prints critical and error messages
-void Logger::Error(std::string str) {
+void LoggerTH::Error(std::string str) {
 	if (level <= error) {
 		printer(error, str);
 	}
 }
 
 // Warning will print Warning on down.
-void Logger::Warning(std::string str) {
+void LoggerTH::Warning(std::string str) {
 	if (level <= warning) {
 		printer(warning, str);
 	}
 }
 
 // info will print Info on down.
-void Logger::Info(std::string str) {
+void LoggerTH::Info(std::string str) {
 	if (level <= info) {
 		printer(info, str);
 	}
 }
 
 // Debug only prints debug marked statements.
-void Logger::Debug(std::string str) {
+void LoggerTH::Debug(std::string str) {
 	if (level == debug) {
 		printer(debug, str);
 	}

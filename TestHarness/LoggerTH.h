@@ -1,16 +1,16 @@
-#ifndef _LOGGER_H_
-#define _LOGGER_H_
+#ifndef _LOGGERTH_H_
+#define _LOGGERTH_H_
 
 #include <iostream>
 enum Level { critical = 5, error = 4, warning = 3, info = 2, debug = 1 };
 
-class Logger {
+class LoggerTH {
 	Level level;
 	void printer(Level myLevel, std::string str);
 
 public:
-	Logger();
-	Logger(Level level);
+	LoggerTH();
+	LoggerTH(Level level);
 	void setLogLevel(Level level);
 	void Critical(std::string str);
 	void Error(std::string str);
@@ -19,4 +19,4 @@ public:
 	void Debug(std::string str);
 };
 
-#endif // !_LOGGER_H_
+#endif // !_LOGGERTH_H_

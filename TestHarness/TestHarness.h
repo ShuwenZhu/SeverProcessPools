@@ -3,15 +3,24 @@
 #define TESTHARNESS_H
 
 #include <initializer_list>
-#include "Logger.h"
+#include "LoggerTH.h"
+#include "Comm/MsgPassingComm/Comm.h"
+using namespace MsgPassingCommunication;
 
 class TestHarness {
 private:
-	Logger log; //Logger package
-
+	LoggerTH log; //Logger package
+	BlockingQueue<EndPoint> readyQueue;
+	BlockingQueue<Message> requestQueue;
+	bool startWorker(int serverPort, int clientPort);
+	void ProcessQueues(int serverPort);
 public:
-	TestHarness(Logger myLogger);
+	void serverThreadFunction(int serverPort);
+
+	TestHarness(LoggerTH myLogger);
 	bool TestLibrary(::std::string libname);
+	void StartHarnessServer(int serverPort);
+	void StartWorkers(int serverPort, int workerCount);
 	//destructor
 	~TestHarness();
 };
