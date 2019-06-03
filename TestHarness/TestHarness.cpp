@@ -31,7 +31,11 @@ bool TestHarness::startWorker(int serverPort, int clientPort) {
 
 	// Create the client process with arguments
 	if (CreateProcess(
+#ifdef _DEBUG
 		"..\\Debug\\Worker.exe",
+#else
+		"..\\Release\\Worker.exe",
+#endif
 		LPSTR(cmdArgs.c_str()),
 		NULL, NULL, FALSE, 0, NULL,
 		NULL, &info, &processInfo)) {

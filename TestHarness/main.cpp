@@ -17,9 +17,16 @@ using SUtils = Utilities::StringHelper;
 
 int main(void) {
 
+	// This is hideous I know.
+#ifdef _DEBUG
+	std::string clientPath = "..\\Debug\\Client.exe";
+#else
+	std::string clientPath = "..\\Release\\Client.exe";
+#endif
+
 	// Some constants
 	std::string xmlFilePath = "../TestHarness/xmlfiles/test1.xml";
-	std::string clientPath = "..\\Debug\\Client.exe";
+
 	int serverPort = 9091;
 	const int workerCount = 5;
 
