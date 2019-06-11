@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstdarg>
 #include <initializer_list>
+#include <iostream>
 #include <sstream>
 
 #include "TestHarness.h"
@@ -52,7 +53,8 @@ bool TestHarness::startWorker(int serverPort, int clientPort) {
 // ProcessQueues handles the queues, dispatching REQUESTS to READY workers.
 void TestHarness::ProcessQueues(int serverPort) {
 	Message msg;
-	Message request;
+	Message requestMsg;
+	Message readyMsg;
 	EndPoint client;
 	SocketSystem ss;
 
@@ -65,13 +67,13 @@ void TestHarness::ProcessQueues(int serverPort) {
 		// We have a request message and a client
 		//    once this unblocks!
 		msg = requestQueue.deQ();
-		client = readyQueue.deQ();
-
-		request.to(client);
-		request.from(msg.to());
-		request.name("REQUEST");
-		request.command(msg.command());
-		myComm.postMessage(request);
+		readyMsg = readyQueue.deQ();
+		client = readyMsg.from();
+		requestMsg = msg;
+		requestMsg.to(client);
+		requestMsg.from(msg.to());
+		requestMsg.name("REQUEST");
+		myComm.postMessage(requestMsg);
 	}
 	return;
 }
@@ -80,44 +82,56 @@ void TestHarness::serverThreadFunction(int serverPort) {
 	std::ostringstream output;
 	SocketSystem ss;
 	EndPoint serverEP("localhost", serverPort);
+
 	Comm myComm(serverEP, "serverComm");
 	myComm.start();
+
+
 
 	using memfunc_type = void (TestHarness::*)(int);
 	memfunc_type memfunc = &TestHarness::ProcessQueues;
 	std::thread QueueProcess(memfunc, this, serverPort);
 
 	QueueProcess.detach();
+	int port;
+	std::string hostname;
 
 	Message msg;  // blocks until message arrives
 	while (true) {
 		msg = myComm.getMessage();
-		log.Debug("========================================================");
 		if (msg.name() == "READY") {
-			log.Debug("Processing a READY message..");
+			output.str("Processing a READY message from a worker.");
+			log.Info(output.str());
 			// Push worker endpoint to ready queue!
 			log.Info("Adding a worker to the READY queue.");
-			readyQueue.enQ(msg.from());
+			readyQueue.enQ(msg);
 		}
 		else if (msg.name() == "REQUEST") {
-			log.Debug("Processing a REQUEST message..");
+			// A request comes from a client. We push the message on the request queue.
+			output.str("");
+			output << "Processing a REQUEST message for dll --" << msg.command() << "--";
+			log.Info(output.str());
 			requestQueue.enQ(msg);
-			// pop a worker off the ready queue, pass it a request
 		}
 		else if (msg.name() == "RESULT") {
-			log.Debug("Processing a RESULT message..");
-			log.Info("========================================================");
-			output.str(""); output << "Received a result from child --" << msg.attribName("libname");
-			output << "--: Test was a --" << msg.command() << "--";
+			// Pass the message back to the client!
+			output.str("");
+			output << "RESULT msg received for dll --" << msg.getAttribute("libname") << "--. Result: --" << msg.command() << "--";
 			log.Info(output.str());
-			msg.show();
-			log.Info("========================================================");
+			// Convert value from string to int. Works idk.
+			std::stringstream strValue;
+			strValue << msg.getAttribute("requesterPort");
+			strValue >> port;
+
+			EndPoint client(msg.getAttribute("requesterIp"), port );
+			msg.from(msg.to());
+			msg.to(client);
+			myComm.postMessage(msg);
 		}
 		else {
 			log.Warning("Unknown message recieved, tossing.");
 			// Toss it
 		}
-		log.Debug("========================================================");
 	}
 }
 

@@ -20,7 +20,7 @@ using SUtils = Utilities::StringHelper;
 
 int main(int argc, char* argv[]) {
 	//std::cout << "Client.exe starting\n";
-
+	int myPort = 9999;
 	int serverPort = 9091;
 	std::string xmlFileName = "../TestHarness/xmlfiles/test1.xml";
 
@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
 	// Socket/Comm interface spin up!
 	SocketSystem ss;
 	EndPoint serverEP("localhost", serverPort);
-	EndPoint clientEP("localhost", 9999);
+	EndPoint clientEP("localhost", myPort);
 	Comm comm(clientEP, "clientComm");
 	comm.start();
 
@@ -55,8 +55,22 @@ int main(int argc, char* argv[]) {
 			if (libName == "test") { continue; }
 			//std::cout << "Sending DLL Library name: --" << libName << "-- to server\n";
 			msg.command(libName);
+			msg.attribute("requesterIp", "localhost");
+			msg.attribute("requesterPort", std::to_string(myPort));
 			comm.postMessage(msg);
 		}
+	}
+
+	Message responseMessage;  // blocks until message arrives
+	while (true) {
+		//std::cout << "Waiting for message...\n";
+		responseMessage = comm.getMessage();
+		std::cout << "=======================================================\n";
+		std::cout << "Client: Got a response message!" << "\n";
+		std::cout << "\tDLL: --" << responseMessage.getAttribute("libname") << "--\n";
+		std::cout << "\tResult: --" << responseMessage.command() << "--\n";
+		std::cout << "=======================================================\n";
+		//responseMessage.show();
 	}
 	//std::cout << "All Done!\n";
 	comm.stop();

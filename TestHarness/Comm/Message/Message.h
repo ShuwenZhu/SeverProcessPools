@@ -94,7 +94,8 @@ namespace MsgPassingCommunication
     std::string name();
     void name(const std::string& nm);
     std::string command();
-    void command(const std::string& cmd);
+	std::string getAttribute(const std::string& myKey);
+	void command(const std::string& cmd);
     std::string file();
     void file(const std::string& fl);
     size_t contentLength();

@@ -10,7 +10,7 @@ using namespace MsgPassingCommunication;
 class TestHarness {
 private:
 	LoggerTH log; //Logger package
-	BlockingQueue<EndPoint> readyQueue;
+	BlockingQueue<Message> readyQueue;
 	BlockingQueue<Message> requestQueue;
 	bool startWorker(int serverPort, int clientPort);
 	void ProcessQueues(int serverPort);

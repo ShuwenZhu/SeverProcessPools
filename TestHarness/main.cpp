@@ -15,7 +15,10 @@ using namespace Sockets;
 using SUtils = Utilities::StringHelper;
 
 
+
+
 int main(void) {
+	//std::cout << "My custom: " << msg.getAttribute("kwren") << "\n";
 
 	// This is hideous I know.
 #ifdef _DEBUG
@@ -31,10 +34,8 @@ int main(void) {
 	const int workerCount = 5;
 
 	// Start the logger and harness
-	LoggerTH log(::Level::info);
+	LoggerTH log(::Level::debug);
 	TestHarness harness(log);
-
-
 
 	// =========================================================================
 	// Some black magic needed, found here:

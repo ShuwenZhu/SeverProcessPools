@@ -112,6 +112,11 @@ int main(int argc, char* argv[]) {
 			passFailReply.to(request.from());
 			passFailReply.from(request.to());
 			passFailReply.name("RESULT");
+
+			// Transfer them.
+			passFailReply.attribute("requesterIp", request.getAttribute("requesterIp"));
+			passFailReply.attribute("requesterPort", request.getAttribute("requesterPort"));
+
 			comm.postMessage(passFailReply);
 		}
 		//request.show();

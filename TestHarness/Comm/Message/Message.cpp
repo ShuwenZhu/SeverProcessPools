@@ -117,6 +117,15 @@ std::string Message::command()
   }
   return "";
 }
+
+std::string Message::getAttribute(const std::string& myKey) {
+	if (containsKey(myKey))
+	{
+		return attributes_[myKey];
+	}
+	return "";
+}
+
 //----< set command attribute >----------------------------------------
 
 void Message::command(const std::string& cmd)
@@ -137,7 +146,7 @@ std::string Message::file()
 
 void Message::file(const std::string& fl)
 {
-  attributes_["file"] = fl;
+	attributes_["file"] = fl;
 }
 //----< get body length >----------------------------------------------
 
@@ -150,6 +159,7 @@ size_t Message::contentLength()
   }
   return 0;
 }
+
 //----< set body length >----------------------------------------------
 
 void Message::contentLength(size_t ln)
